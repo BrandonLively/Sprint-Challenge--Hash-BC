@@ -22,19 +22,20 @@ def proof_of_work(last_proof):
 
     start = timer()
 
-    testnum = 1234567890
-    print(f"{testnum}"[-6:])
-    print(f"{testnum}"[:6])
     print("Searching for next proof")
     proof = 0
-    print(last_proof)
-    print(hashlib.sha256(f"{last_proof}".encode()).hexdigest())
-
+    timed_out = False
     while valid_proof(hashlib.sha256(f"{last_proof}".encode()).hexdigest(), proof) is False:
+        if (timer() - start) > 3:
+            timed_out = True
+            return
         proof = copy = random.randint(-99999999999, 999999999999)
 
 
-    print("Proof found: " + str(proof) + " in " + str(timer() - start))
+    if timed_out:
+        print("Timed out")
+    else:
+        print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
 
 
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         node = sys.argv[1]
     else:
-        node = "https://lambda-coin-test-1.herokuapp.com/api"
+        node = "https://lambda-coin.herokuapp.com/api"
 
     coins_mined = 0
 
